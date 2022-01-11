@@ -14,4 +14,4 @@ if __name__=='__main__':
     while True:
         o9g.run()
         view.update(o9g.rpm, o9g.gear, o9g.lock)
-        sleep_ms(50)#slow for testing
+        sleep_ms(50) #slow for testing
