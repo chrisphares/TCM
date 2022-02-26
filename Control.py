@@ -12,46 +12,45 @@ class Control:
     ON = const(1)
     
     #/n88, n89, n90, n92, n282, n283/
-    park = (OFF, OFF, ON, OFF, OFF, ON)
-    reverse = (OFF, OFF, OFF, ON, ON, ON)
-    nuetral = (OFF, OFF, ON, ON, ON, ON)
-    first = (ON, ON, OFF, ON, ON, ON)
-    second = (OFF, OFF, ON, OFF, ON, OFF)
-    third = (ON, ON, OFF, OFF, ON, ON)
-    fourth = (ON, ON, ON, OFF, OFF, ON)
-    fifth = (ON, ON, OFF, ON, OFF, ON)
-    sixth = (ON, ON, ON, ON, OFF, OFF)
+    park = (ON, OFF, OFF, ON)
+    reverse = (OFF, ON, ON, ON)
+    nuetral = (ON, ON, ON, ON)
+    first = (OFF, ON, ON, ON)
+    second = (ON, OFF, ON, OFF)
+    third = (OFF, OFF, ON, ON)
+    fourth = (ON, OFF, OFF, ON)
+    fifth = (OFF, ON, OFF, ON)
+    sixth = (ON, ON, OFF, OFF)
     drive = first #set this to second maybe?
 
     def __init__(self):# prolly oss for overrev protection        
         
         #/pin, blahhh
-        self.n88 = OnOff_Solenoid('X4', OFF)
-        self.n89 = OnOff_Solenoid('X3', OFF)
+        self.n88 = OnOff_Solenoid('X22', OFF)
+        self.n89 = OnOff_Solenoid('X21', OFF)
         
-        self.n90 = Control_Solenoid('Y1', 10, 60)
-        self.n92 = Control_Solenoid('Y7', 10, 60)
-        self.n282 = Control_Solenoid('X9', 10, 60)
-        self.n283 = Control_Solenoid('X10', 10, 90)
+        self.n90 = Control_Solenoid('X4', 10, 60)
+        self.n92 = Control_Solenoid('X2', 20, 60)
+        self.n282 = Control_Solenoid('Y10', 30, 60)
+        self.n283 = Control_Solenoid('Y9', 40, 90)
 
-        #all but the pressure solenoids
-        self.vb = (self.n88, self.n89, self.n90, self.n92, self.n282, self.n283)#class or tuple??
+        #all but the pwm solenoids
+        self.vb = (self.n90, self.n92, self.n282, self.n283)#class or tuple??
 
-        self.n91 = Pressure_Solenoid('Y2', 50)
-        self.n93 = Pressure_Solenoid('Y8', 50)
+        self.n91 = Pressure_Solenoid('X3', 50)
+        self.n93 = Pressure_Solenoid('X1', 60)
         
         #/pin, delay, Gear/
-        self.parkIO = Select_IO('X19', 250, self.park)
-        self.reverseIO = Select_IO('X20', 250, self.reverse)
-        self.nuetralIO = Select_IO('X21', 100, self.nuetral)
-        
-        self.driveIO = Drive_IO('X22', 100, self.drive)
+        self.parkIO = Select_IO('Y2', 250, self.park)
+        self.reverseIO = Select_IO('Y3', 250, self.reverse)
+        self.nuetralIO = Select_IO('Y6', 100, self.nuetral)
+        self.driveIO = Drive_IO('Y7', 100, self.drive)
         
         #/pin, delay/
-        self.upIO = Paddle_Up_IO('X1', 15)
-        self.downIO = Paddle_Down_IO('X2', 15)
+        self.upIO = Paddle_Up_IO('Y12', 15)
+        self.downIO = Paddle_Down_IO('Y11', 15)
         
-        self.lockIO = Pin_IO('X7', 15)
+        self.lockIO = Pin_IO('Y1', 15)
         
         self.inputs = (
             self.parkIO,
@@ -71,7 +70,7 @@ class Control:
         
         self.rpm = 0
         self.gear = None
-        self.lock = OFF
+        self.lock = OFF #range of 0-10?
             
     def setInputFlags(self):
         for i, io in enumerate(self.inputs):
@@ -95,7 +94,7 @@ class Control:
                 self.lock = OFF
 
     def adjustMain(self):
-        value = 50 #sensor value?
+        value = 50 # test sensor value
         self.n93.setPS(value)
 
     def adjustTC(self):
@@ -106,7 +105,6 @@ class Control:
         self.setInputFlags()
         self.resolveInputFlags()
         
-        self.adjustMain()
-        self.adjustTC()
-        self.reverseIO.press(self.vb)
-        print(f"{self.vb[2].duty} {self.vb[3].duty} {self.vb[4].duty} {self.vb[5].duty}")
+        #self.adjustMain()
+        #self.adjustTC()
+        print(f"{self.vb[0].io.pulse_width_percent()} {self.vb[1].io.pulse_width_percent()} {self.vb[2].io.pulse_width_percent()} {self.vb[3].io.pulse_width_percent()}")
