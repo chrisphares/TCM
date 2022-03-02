@@ -12,7 +12,6 @@ class Pressure_Sensor:
     def value(self):
         return int(self.io.read() / (4095 / (self.max - self.min)) + self.min) #/ +math 
 
-#---Sensor Sub Class //Type: Temp---
 class Temp_Sensor:
     def __init__(self, pin, min, max):
         self.pin = pin
@@ -23,7 +22,6 @@ class Temp_Sensor:
     def value(self):
         return int(self.io.read() / (4095 / (self.max - self.min)) + self.min) #/ +math
 
-#---Sensor Sub Class //Type: speed---
 class Speed_Sensor:
     rpm = 0
     count = 0

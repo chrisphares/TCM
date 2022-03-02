@@ -1,4 +1,4 @@
-from pyb import Pin
+from pyb import Pin, ADC
 from time import ticks_ms, ticks_diff
 
 class Pin_IO:
@@ -38,3 +38,11 @@ class Paddle_Down_IO(Pin_IO):
     def press(self, currentGear):
         if currentGear:
             return currentGear - 1
+
+class Adjust_IO:
+    def __init__(self, pin)
+        self.adc = ADC(Pin(pin))
+
+    def value(self):
+        value = int(4096 / self.adc.read())
+        return value

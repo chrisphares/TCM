@@ -26,7 +26,7 @@ class Control:
     def __init__(self):# prolly oss for overrev protection        
         
         #/pin, blahhh
-        self.n88 = OnOff_Solenoid('X22', OFF)
+        self.n88 = OnOff_Solenoid('X22', ON)
         self.n89 = OnOff_Solenoid('X21', OFF)
         
         self.n90 = Control_Solenoid('X4', 10, 60)
@@ -69,7 +69,7 @@ class Control:
         #iss = Speed_Sensor('X7')
         
         self.rpm = 0
-        self.gear = None
+        self.gear = self.park
         self.lock = OFF #range of 0-10?
             
     def setInputFlags(self):

@@ -1,6 +1,6 @@
 from machine import bitstream
 from pyb import Pin
-
+ 
 class NeoPixel:
     ORDER = (1, 0, 2, 3)
 
