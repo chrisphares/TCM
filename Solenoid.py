@@ -36,7 +36,7 @@ class Control_Solenoid:
         self.stepON = int((self.highPS - self.lowPS) / 60)# **define this number
         self.stepOFF = int((self.highPS - self.lowPS) / 30)# **define this number
         #self.ps = lowPS # **identify why this is duplicative
-        self.io.pulse_width_percent(self.lowPS)
+        self.io.pulse_width_percent(self.duty)
 
     def adjustState(self, value):
         if value:

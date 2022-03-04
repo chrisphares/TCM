@@ -14,7 +14,7 @@ class Control:
     OFF = const(0)
     ON = const(1)
     
-    #/n88, n89, n90, n92, n282, n283/
+    #/n90, n92, n282, n283/
     park = (ON, OFF, OFF, ON)
     reverse = (OFF, ON, ON, ON)
     nuetral = (ON, ON, ON, ON)
@@ -54,7 +54,10 @@ class Control:
         self.downIO = Paddle_Down_IO('Y11', 15)
         
         self.lockIO = Pin_IO('Y1', 15)
-        
+
+        self.adj_ps = Adjust_IO('X11')
+        self.adj_tcc = Adjust_IO('X12')
+                
         self.inputs = (
             self.parkIO,
             self.reverseIO,
@@ -71,9 +74,6 @@ class Control:
         tft = Temp_Sensor('Y12', 30, 100)
         #oss = Speed_Sensor('X6')
         #iss = Speed_Sensor('X7')
-        
-        self.adj_ps = Adjust_IO('X11')
-        self.adj_tcc = Adjust_IO('X12')
 
         self.rpm = 0
         self.gear = None
