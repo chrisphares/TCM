@@ -40,9 +40,26 @@ class Paddle_Down_IO(Pin_IO):
             return currentGear - 1
 
 class Adjust_IO:
-    def __init__(self, pin)
+    def __init__(self, pin):
         self.adc = ADC(Pin(pin))
 
     def value(self):
-        value = int(4096 / self.adc.read())
-        return value
+        r = self.adc.read()
+        if not r:
+            return 0
+        elif r < 250:
+            return 0
+        elif r < 800:
+            return 1
+        elif r < 1400:
+            return 2
+        elif r < 2000:
+            return 3
+        elif r < 2600:
+            return 4
+        elif r < 3200:
+            return 5
+        elif r < 3600:
+            return 6
+        elif r >= 3600:
+            return 7

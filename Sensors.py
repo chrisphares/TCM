@@ -2,15 +2,11 @@ from pyb import ADC, Pin
 from time import ticks_ms, ticks_us, ticks_diff, ticks_add
 
 class Pressure_Sensor:
-    def __init__(self, pin, min, max):
-        self.pin = pin
-        self.min = min
-        self.max = max#consolodate ^v
-        self.ps = (min, max)
-        self.io = ADC(self.pin)
+    def __init__(self, pin):
+        self.io = Pin(pin, Pin.IN, Pin.PULL_UP)
 
     def value(self):
-        return int(self.io.read() / (4095 / (self.max - self.min)) + self.min) #/ +math 
+        return self.io.value() 
 
 class Temp_Sensor:
     def __init__(self, pin, min, max):

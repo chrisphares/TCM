@@ -1,8 +1,7 @@
 from time import sleep_ms
 
 #---User Modules
-import View
-import Control
+import View, Control
 
 def main():
     view = View.View()#, oss, iss)

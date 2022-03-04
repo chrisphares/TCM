@@ -2,9 +2,12 @@ from time import ticks_ms, ticks_diff, sleep_ms
 
 #---user modules
 from Solenoid import OnOff_Solenoid, Pressure_Solenoid, Control_Solenoid
-from Pin_IO import Pin_IO, Select_IO, Drive_IO, Paddle_Up_IO, Paddle_Down_IO
+from Pin_IO import Pin_IO, Select_IO, Drive_IO, Paddle_Up_IO, Paddle_Down_IO, Adjust_IO
 from Sensors import Pressure_Sensor, Temp_Sensor, Speed_Sensor
 from Data import Data
+
+#testing
+import random
 
 #---Control Class---
 class Control:   
@@ -26,7 +29,7 @@ class Control:
     def __init__(self):# prolly oss for overrev protection        
         
         #/pin, blahhh
-        self.n88 = OnOff_Solenoid('X22', ON)
+        self.n88 = OnOff_Solenoid('X22', OFF)
         self.n89 = OnOff_Solenoid('X21', OFF)
         
         self.n90 = Control_Solenoid('X4', 10, 60)
@@ -62,14 +65,18 @@ class Control:
             self.lockIO,
             )
         
-        ps1 = Pressure_Sensor('X11', 20, 80) #main line pressure
-        ps2 = Pressure_Sensor('X12', 12, 100) #lockup pressure
+        #self dot?
+        ps1 = Pressure_Sensor('X17') #//change to onoff input only
+        ps2 = Pressure_Sensor('X18') #//change to onoff input only
         tft = Temp_Sensor('Y12', 30, 100)
         #oss = Speed_Sensor('X6')
         #iss = Speed_Sensor('X7')
         
+        self.adj_ps = Adjust_IO('X11')
+        self.adj_tcc = Adjust_IO('X12')
+
         self.rpm = 0
-        self.gear = self.park
+        self.gear = None
         self.lock = OFF #range of 0-10?
             
     def setInputFlags(self):
@@ -94,17 +101,30 @@ class Control:
                 self.lock = OFF
 
     def adjustMain(self):
-        value = 50 # test sensor value
-        self.n93.setPS(value)
+        #value = 50 # test sensor value
+        #self.n93.setPS(value)
+        print(f"main ps: {self.adj_ps.value()}")
 
     def adjustTC(self):
-        value = 30
-        self.n91.setPS(value)#get a value and actually adjust?
+        if not self.lock:
+            pass
+        else:
+
+        #value = 30
+        #self.n91.setPS(value)#get a value and actually adjust?        
+            print(f"TCC switcher: {self.adj_tcc.value()}")
+
+    def getADJValues(self):
+        pass
+        #if tc on
+
 
     def run(self):
         self.setInputFlags()
         self.resolveInputFlags()
         
-        #self.adjustMain()
-        #self.adjustTC()
-        print(f"{self.vb[0].io.pulse_width_percent()} {self.vb[1].io.pulse_width_percent()} {self.vb[2].io.pulse_width_percent()} {self.vb[3].io.pulse_width_percent()}")
+        self.adjustMain()
+        self.adjustTC() 
+
+        #testing:
+        self.rpm = random.randint(0, 5500)                                                                                                                                                                                                                                                      

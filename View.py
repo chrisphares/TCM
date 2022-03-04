@@ -12,9 +12,10 @@ class View:
         self.matrix = DotStar(spi, 64)
         self.led_1 = Pin('Y8', Pin.OUT)
         self.ledstrip=NeoPixel(self.led_1, 10)
+        self.lastRPM = 0
+        self.lastGear = None
         
-    def show_rpm(self, rpm):
-        r = int(rpm / 500) * 500
+    def show_rpm(self, r):
         self.updateStrip(self.ledstrip, Data.RPM[r])
     
     def show_kitt(self, kitt):
@@ -24,12 +25,6 @@ class View:
         else:
             self.kitt = 0
             self.updateStrip(self.ledstrip, Data.KITT[0])
-
-        #if not selectGear == 0:
-            #self.show_rpm(self.rpm)
-        #else:
-            #self.show_kitt(self.kitt)
-            #sleep_ms(30)
             
     def updateStrip(self, l, a):
         for i in range(l.n):
@@ -41,7 +36,10 @@ class View:
         for i in range(len(d)):
             self.matrix[i] = d[i]
     
-    def update(self, r, g, l):
-        self.show_rpm(615)
-        self.updateMatrix(g)
-        print(f"rpm:{r} gear:{g} lock:{l}")
+    def update(self, rpm, g, l):
+        rpm = int(rpm / 500) * 500
+        if not rpm == self.lastRPM:
+            self.lastRPM = rpm
+            self.show_rpm(self.lastRPM)
+        #self.updateMatrix(g)
+        #print(f"rpm:{r} gear:{g} lock:{l}")
