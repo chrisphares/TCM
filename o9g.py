@@ -6,7 +6,7 @@ import View, Control
 def main():
     view = View.View()#, oss, iss)
     o9g = Control.Control()
-    
+
     while True:
         o9g.run()
         view.update(o9g.rpm, o9g.gear, o9g.lock)

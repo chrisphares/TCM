@@ -10,7 +10,7 @@ class View:
     def __init__(self):
         spi = SPI(1, SPI.CONTROLLER, baudrate=42_000_000)
         self.matrix = DotStar(spi, 64)
-        self.led_1 = Pin('Y8', Pin.OUT)
+        self.led_1 = Pin('X10', Pin.OUT)
         self.ledstrip=NeoPixel(self.led_1, 10)
         self.lastRPM = 0
         self.lastGear = None

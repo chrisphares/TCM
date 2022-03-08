@@ -6,38 +6,19 @@ class Pin_IO:
     lastInputState = 0
     lastDebounceTime = 0
         
-    def __init__(self, pin, delay, gear=None):
-        self.pin = Pin(pin, Pin.IN, Pin.PULL_DOWN)
+    def __init__(self, pin, delay: int, gear=None):
+        self.pin = Pin(pin, Pin.IN, Pin.PULL_UP)
         self.delay = delay
         self.gear = gear
     
     def value(self):
         return self.pin.value()
     
-    def press(self, currentGear, onOff):
-        return onOff
-
-class Select_IO(Pin_IO):
-    def press(self, vb):
-        for i, g in enumerate(self.gear):
-            if not vb[i].compareState(g):
-                vb[i].adjustState(g)
-
-class Drive_IO(Pin_IO):
-    def press(self, vb):
-        for i, g in enumerate(self.gear):
-            if not vb[i].compareState(g):
-                vb[i].adjustState(g)
-        
-class Paddle_Up_IO(Pin_IO):
     def press(self, currentGear):
-        if currentGear:
-            return currentGear + 1
-        
-class Paddle_Down_IO(Pin_IO):
-    def press(self, currentGear):
-        if currentGear:
-            return currentGear - 1
+        if self.gear is None:
+            pass
+        else:
+            print(f"{self.gear=}")
 
 class Adjust_IO:
     def __init__(self, pin):

@@ -1,7 +1,4 @@
-class Data:
-    OFF = const(0)
-    ON = const(1)
-    
+class Data:    
     RED = (25, 0, 0)
     L_RED = (9, 0, 0)
     YELLOW = (25, 15, 5)
