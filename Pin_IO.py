@@ -1,5 +1,7 @@
+import uasyncio
 from pyb import Pin, ADC
 from time import ticks_ms, ticks_diff
+from Data import Data
 
 class Pin_IO:
     inputFlags = 0
@@ -14,33 +16,53 @@ class Pin_IO:
     def value(self):
         return self.pin.value()
     
-    def press(self, currentGear):
-        if self.gear is None:
-            pass
-        else:
-            print(f"{self.gear=}")
+    def press(self):
+        print(f"{self.gear}")
 
-class Adjust_IO:
-    def __init__(self, pin):
-        self.adc = ADC(Pin(pin))
+    def set_input_flags(self):
+        reading = self.pin.value()
+        if reading != self.lastInputState:
+            self.lastDebounceTime = ticks_ms()
+        debounce = ticks_diff(ticks_ms(), self.lastDebounceTime)
+        if debounce > self.delay:
+            self.inputFlags = reading
+                
+        self.lastInputState = reading
 
-    def value(self):
-        r = self.adc.read()
-        if not r:
-            return 0
-        elif r < 250:
-            return 0
-        elif r < 800:
-            return 1
-        elif r < 1400:
-            return 2
-        elif r < 2000:
-            return 3
-        elif r < 2600:
-            return 4
-        elif r < 3200:
-            return 5
-        elif r < 3600:
-            return 6
-        elif r >= 3600:
-            return 7
+    def resolve_input_flags(self):
+        if not self.inputFlags:
+            self.press()
+
+class Input:
+    #gear selection inputs
+    parkIO = Pin_IO('Y6', 250, Data.PARK)
+    reverseIO = Pin_IO('Y7', 250, Data.REVERSE)
+    nuetralIO = Pin_IO('Y8', 100, Data.NUETRAL)
+    driveIO = Pin_IO('X9', 100, Data.DRIVE)
+    
+    #paddle gear input
+    upIO = Pin_IO('Y2', 15, 'up')
+    downIO = Pin_IO('Y3', 15, 'dn')
+    
+    #TC Lock button
+    lockIO = Pin_IO('Y1', 15, 'tcc')
+
+    inputs = (
+        parkIO,
+        reverseIO,
+        nuetralIO,
+        driveIO,
+        upIO,
+        downIO,
+        lockIO,
+        )
+
+    def __init__(self, state):
+        self.current = state
+
+    async def evaluate(self):
+        while True:
+            for i in self.inputs:
+                i.set_input_flags()
+                i.resolve_input_flags()
+            await uasyncio.sleep_ms(50)

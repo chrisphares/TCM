@@ -1,17 +1,27 @@
+import uasyncio
 from time import sleep_ms
 
 #---User Modules
-import View, Control
+import View, Solenoid, Pin_IO, Sensors, Control, Data
 
-def main():
-    view = View.View()#, oss, iss)
-    o9g = Control.Control()
+async def main():
+    current = Data.State()
 
-    while True:
-        o9g.run()
-        view.update(o9g.rpm, o9g.gear, o9g.lock)
-        sleep_ms(50) #slow for testing
+    view = View.View(current)
+    sol = Solenoid.Valve_Body(current)
+    io = Pin_IO.Input(current)
+    read = Sensors.Read(current)
+    o9g = Control.Control(current)
+
+    uasyncio.create_task(o9g.run())
+    uasyncio.create_task(view.update())
+    uasyncio.create_task(sol.adjust())
+    uasyncio.create_task(io.evaluate())
+    uasyncio.create_task(read.update())
+
+    while True:        
+        await uasyncio.sleep_ms(50)
 
 #---Main Function---
 if __name__=='__main__':
-    main()
+    uasyncio.run(main())

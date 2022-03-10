@@ -1,4 +1,25 @@
-class Data:    
+OFF = const(0)
+ON = const(1)
+
+class State:
+    def __init__(self):
+        self.rpm = 0
+        self.gear = None
+        self.lock = OFF  
+
+class Data:
+    #/n88, n89, n90, n92, n282, n283/
+    PARK = (OFF, OFF, ON, OFF, OFF, ON)
+    REVERSE = (OFF, OFF, OFF, ON, ON, ON)
+    NUETRAL = (OFF, OFF, ON, ON, ON, ON)
+    FIRST = (ON, ON, OFF, ON, ON, ON)
+    SECOND = (OFF, OFF, ON, OFF, ON, OFF)
+    THIRD = (ON, ON, OFF, OFF, ON, ON)
+    FOURTH = (ON, ON, ON, OFF, OFF, ON)
+    FIFTH = (ON, ON, OFF, ON, OFF, ON)
+    SIXTH = (ON, ON, ON, ON, OFF, OFF)
+    DRIVE = FIRST #set this to second maybe?
+
     RED = (25, 0, 0)
     L_RED = (9, 0, 0)
     YELLOW = (25, 15, 5)
@@ -23,6 +44,7 @@ class Data:
         'Y10': (2, 4)
     }
     
+    #led strip order
     COLOR = (BG, GREEN, GREEN, GREEN, GREEN, YELLOW, YELLOW, RED, RED, BLUE, BLUE)
     
     RPM = {
@@ -38,6 +60,7 @@ class Data:
         4500: (COLOR[1], COLOR[2], COLOR[3], COLOR[4], COLOR[5], COLOR[6], COLOR[7], COLOR[8], COLOR[9], COLOR[0]),
         5000: (COLOR[1], COLOR[2], COLOR[3], COLOR[4], COLOR[5], COLOR[6], COLOR[7], COLOR[8], COLOR[9], COLOR[10])
     }
+    #lol
     KITT = {
         0: (RED, L_RED, BG, BG, BG, BG, BG, BG, BG, BG),
         1: (L_RED, RED, BG, BG, BG, BG, BG, BG, BG, BG),
@@ -58,7 +81,8 @@ class Data:
         16: (BG, BG, RED, L_RED, BG, BG, BG, BG, BG, BG),
         17: (BG, RED, L_RED, BG, BG, BG, BG, BG, BG, BG),
     }
-        
+
+    #left to right == bottom to top    
     SPACE = (BG, BG, BG, BG, BG, BG, BG, BG)
     
     N10 = (BG, BG, BG, BG, BG, BG, BG, BLUE)

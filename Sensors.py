@@ -1,5 +1,8 @@
+import uasyncio
 from pyb import ADC, Pin
 from time import ticks_ms, ticks_us, ticks_diff, ticks_add
+#testing
+import random
 
 class Pressure_Sensor:
     def __init__(self, pin):
@@ -46,3 +49,49 @@ class Speed_Sensor:
             #self.rpm = int(self.teeth / self.resolution * 15000000 / duration)
         #print(f"{self.count}")
         return self.rpm
+
+class Rotary_Sensor:
+    def __init__(self, pin):
+        self.adc = ADC(Pin(pin))
+
+    def value(self):
+        r = self.adc.read()
+        if not r:
+            return 0
+        elif r < 250:
+            return 0
+        elif r < 800:
+            return 1
+        elif r < 1400:
+            return 2
+        elif r < 2000:
+            return 3
+        elif r < 2600:
+            return 4
+        elif r < 3200:
+            return 5
+        elif r < 3600:
+            return 6
+        elif r >= 3600:
+            return 7
+
+class Read():
+    adjPS = Rotary_Sensor('X11')
+    adjTCC = Rotary_Sensor('X12')
+
+    ps1 = Pressure_Sensor('X17')
+    ps2 = Pressure_Sensor('X18')
+
+    tft = Temp_Sensor('Y11', 30, 100)
+
+    #oss = Speed_Sensor('X19')
+    #iss = Speed_Sensor('X20')
+
+    def __init__(self, state):
+        self.current = state
+    
+    async def update(self):
+        while True:
+            #for loop for getting sensor data
+            self.current.rpm = random.randint(0, 5400)
+            await uasyncio.sleep_ms(50)
