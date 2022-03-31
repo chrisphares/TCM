@@ -4,23 +4,25 @@ from time import ticks_ms, ticks_diff
 from Data import Data
 
 class Pin_IO:
-    inputFlags = 0
-    lastInputState = 0
-    lastDebounceTime = 0
-        
-    def __init__(self, pin, delay: int, gear=None):
+    OFF = const(0)
+    ON = const(1)
+
+    def __init__(self, pin, delay: int, gear=None, action=None):
         self.pin = Pin(pin, Pin.IN, Pin.PULL_UP)
         self.delay = delay
-        self.gear = gear
+        self.gear = gear#wrong label
+        self.action= action
+        self.state = OFF##
+        self.lastState = OFF##
+        self.inputFlags = OFF
+        self.lastInputState = OFF
+        self.lastDebounceTime = 0
     
     def value(self):
         return self.pin.value()
     
-    def press(self):
-        print(f"{self.gear}")
-
     def set_input_flags(self):
-        reading = self.pin.value()
+        reading = self.value()
         if reading != self.lastInputState:
             self.lastDebounceTime = ticks_ms()
         debounce = ticks_diff(ticks_ms(), self.lastDebounceTime)
@@ -30,39 +32,78 @@ class Pin_IO:
         self.lastInputState = reading
 
     def resolve_input_flags(self):
-        if not self.inputFlags:
-            self.press()
+        return not self.inputFlags
 
 class Input:
-    #gear selection inputs
-    parkIO = Pin_IO('Y6', 250, Data.PARK)
-    reverseIO = Pin_IO('Y7', 250, Data.REVERSE)
-    nuetralIO = Pin_IO('Y8', 100, Data.NUETRAL)
-    driveIO = Pin_IO('X9', 100, Data.DRIVE)
-    
-    #paddle gear input
-    upIO = Pin_IO('Y2', 15, 'up')
-    downIO = Pin_IO('Y3', 15, 'dn')
-    
-    #TC Lock button
-    lockIO = Pin_IO('Y1', 15, 'tcc')
-
-    inputs = (
-        parkIO,
-        reverseIO,
-        nuetralIO,
-        driveIO,
-        upIO,
-        downIO,
-        lockIO,
-        )
-
     def __init__(self, state):
         self.current = state
 
+        #gear selection inputs
+        self.parkIO = Pin_IO('Y6', 250, Data.PARK, self.park)
+        self.reverseIO = Pin_IO('Y7', 250, Data.REVERSE, self.reverse)
+        self.nuetralIO = Pin_IO('Y8', 100, Data.NUETRAL, self.nuetral)
+        self.driveIO = Pin_IO('X9', 100, Data.DRIVE, self.drive)
+        
+        #paddle gear input
+        self.upIO = Pin_IO('Y1', 15, 'up', self.paddle_up)
+        self.downIO = Pin_IO('Y2', 15, 'dn', self.paddle_down)
+        
+        #TC Lock button
+        self.lockIO = Pin_IO('Y5', 15, 'tcc', self.tc_lock)
+
+        self.inputs = (
+            self.parkIO,
+            self.reverseIO,
+            self.nuetralIO,
+            self.driveIO,
+            self.upIO,
+            self.downIO,
+            self.lockIO,
+            )
+
+    def park(self):
+        self.current.selectGear = "P"
+        self.current.nextGear = "P"
+        print(f"park")
+
+    def reverse(self):
+        self.current.selectGear = "R"
+        self.current.nextGear = "R"
+        print(f"reverse")
+
+    def nuetral(self):
+        self.current.selectGear = "N"
+        self.current.nextGear = "N"
+        print(f"nuetral")
+
+    def drive(self):
+        self.current.selectGear = "D"
+        self.current.nextGear = "D"
+        print(f"drive")
+
+    def paddle_up(self):
+        if not self.current.selectGear == "D":
+            pass
+        else:
+            self.current.nextGear = "up"
+            print(f"up")
+
+    def paddle_down(self):
+        if not self.current.selectGear == "D":
+            pass
+        else:
+            self.current.nextGear = "dn"
+            print(f"dn")
+
+    def tc_lock(self):
+        self.current.lock = not self.current.lock
+        print(f"{self.current.lock}")
+
     async def evaluate(self):
         while True:
-            for i in self.inputs:
-                i.set_input_flags()
-                i.resolve_input_flags()
-            await uasyncio.sleep_ms(50)
+            for _ in self.inputs:
+                _.set_input_flags()
+                if _.resolve_input_flags(): #and not self.current.shifting:
+                    _.action()
+
+            await uasyncio.sleep_ms(40)

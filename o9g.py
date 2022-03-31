@@ -20,7 +20,7 @@ async def main():
     uasyncio.create_task(read.update())
 
     while True:        
-        await uasyncio.sleep_ms(50)
+        await uasyncio.sleep_ms(40)
 
 #---Main Function---
 if __name__=='__main__':

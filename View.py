@@ -12,7 +12,7 @@ class View:
         self.current = state
         spi = SPI(1, SPI.CONTROLLER, baudrate=42_000_000)
         self.matrix = DotStar(spi, 64)
-        self.led_1 = Pin('X10', Pin.OUT)
+        self.led_1 = Pin('Y12', Pin.OUT)
         self.ledstrip=NeoPixel(self.led_1, 10)
     
     def convert_rpm(self, rpm: int):
@@ -46,4 +46,4 @@ class View:
 
             #self.updateMatrix(g)
             #print(f"rpm:{r} gear:{g} lock:{l}")
-            await uasyncio.sleep_ms(50)
+            await uasyncio.sleep_ms(40)

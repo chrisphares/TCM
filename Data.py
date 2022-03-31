@@ -4,8 +4,11 @@ ON = const(1)
 class State:
     def __init__(self):
         self.rpm = 0
+        self.lock = False
+        self.shifting = False##?
+        self.selectGear = None
+        self.nextGear = None
         self.gear = None
-        self.lock = OFF  
 
 class Data:
     #/n88, n89, n90, n92, n282, n283/

@@ -1,14 +1,21 @@
 import uasyncio
 
 #---Control Class---
-class Control:   
+class Control:
+    nextGear = None
+
     def __init__(self, state):# add rpm/oss for overrev protection & init gear selection       
         self.current = state
 
     async def run(self):
         while True:
-            # self.set_pwm_sol(self.n91, self.adjPS.value())
-            # if self.lock:
-            #     self.set_pwm_sol(self.n93, self.get_adj_value(self.adjTCC))
+            if self.current.gear != self.current.selectGear:
+                print(f"select from {self.current.gear} to {self.current.selectGear}")
+                self.current.gear = self.current.selectGear
 
-            await uasyncio.sleep_ms(50)
+            elif self.current.gear != self.current.nextGear:
+                print(f"select from {self.current.gear} to {self.current.selectGear}")
+                self.current.gear = self.current.nextGear
+
+
+            await uasyncio.sleep_ms(40)

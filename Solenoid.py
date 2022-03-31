@@ -53,8 +53,8 @@ class Valve_Body:
     async def adjust(self):
         while True:
             for _ in self.vb:
-                if isinstance(_, OnOff_Solenoid):
+                if isinstance(_, OnOff_Solenoid):#wrong place for this
                     pass
                 elif isinstance(_, PWM_Solenoid):
                     _.set_ps(_.lowPS)
-            await uasyncio.sleep_ms(50)
+            await uasyncio.sleep_ms(40)
