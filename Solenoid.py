@@ -57,7 +57,9 @@ class Valve_Body:
                     pass
                 elif isinstance(_, PWM_Solenoid):
                     _.set_ps(_.lowPS)
+
             if self.state.gear != self.state.selectGear:
                 print(f"select from {self.state.gear} to {self.state.selectGear}")
                 self.state.gear = self.state.selectGear
+                
             await uasyncio.sleep_ms(40)
