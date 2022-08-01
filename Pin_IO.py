@@ -7,11 +7,10 @@ class Pin_IO:
     OFF = const(0)
     ON = const(1)
 
-    def __init__(self, pin, delay: int, gear=None, action=None):
-        self.pin = Pin(pin, Pin.IN, Pin.PULL_UP)
+    def __init__(self, pin, delay: int, action=None):
+        self.pin = Pin(pin, Pin.IN, Pin.PULL_DOWN)
         self.delay = delay
-        self.gear = gear#wrong label
-        self.action= action
+        self.action = action
         self.state = OFF##
         self.lastState = OFF##
         self.inputFlags = OFF
@@ -32,24 +31,24 @@ class Pin_IO:
         self.lastInputState = reading
 
     def resolve_input_flags(self):
-        return not self.inputFlags
+        return self.inputFlags
 
 class Input:
     def __init__(self, state):
-        self.current = state
+        self.state = state
 
         #gear selection inputs
-        self.parkIO = Pin_IO('Y6', 250, Data.PARK, self.park)
-        self.reverseIO = Pin_IO('Y7', 250, Data.REVERSE, self.reverse)
-        self.nuetralIO = Pin_IO('Y8', 100, Data.NUETRAL, self.nuetral)
-        self.driveIO = Pin_IO('X9', 100, Data.DRIVE, self.drive)
+        self.parkIO = Pin_IO('Y5', 250, self.park)
+        self.reverseIO = Pin_IO('Y6', 250, self.reverse)
+        self.nuetralIO = Pin_IO('Y7', 100, self.nuetral)
+        self.driveIO = Pin_IO('Y8', 100, self.drive)
         
         #paddle gear input
-        self.upIO = Pin_IO('Y1', 15, 'up', self.paddle_up)
-        self.downIO = Pin_IO('Y2', 15, 'dn', self.paddle_down)
+        self.upIO = Pin_IO('Y1', 15, self.paddle_up)
+        self.downIO = Pin_IO('Y2', 15, self.paddle_down)
         
         #TC Lock button
-        self.lockIO = Pin_IO('Y5', 15, 'tcc', self.tc_lock)
+        self.lockIO = Pin_IO('Y12', 15, self.tc_lock)
 
         self.inputs = (
             self.parkIO,
@@ -61,49 +60,57 @@ class Input:
             self.lockIO,
             )
 
-    def park(self):
-        self.current.selectGear = "P"
-        self.current.nextGear = "P"
-        print(f"park")
-
-    def reverse(self):
-        self.current.selectGear = "R"
-        self.current.nextGear = "R"
-        print(f"reverse")
-
-    def nuetral(self):
-        self.current.selectGear = "N"
-        self.current.nextGear = "N"
-        print(f"nuetral")
-
-    def drive(self):
-        self.current.selectGear = "D"
-        self.current.nextGear = "D"
-        print(f"drive")
-
-    def paddle_up(self):
-        if not self.current.selectGear == "D":
+    def park(self, state):
+        if (state.gear == Data.PARK):
             pass
         else:
-            self.current.nextGear = "up"
+            state.selectGear = Data.SELECT_PARK
+            print(f"{state.rpm} {state.lock} {state.gear} {state.selectGear} {state.nextGear}")
+
+    def reverse(self, state):
+        if (state.gear == Data.REVERSE):
+            pass
+        else:
+            state.selectGear = Data.SELECT_REVERSE
+            print(f"reverse")
+
+    def nuetral(self, state):
+        if (state.gear == Data.SELECT_NUETRAL):
+            pass
+        else:
+            state.selectGear = Data.SELECT_NUETRAL
+            print(f"nuetral")
+
+    def drive(self, state):
+        if (state.gear == Data.PARK): #is this the correct variable?
+            pass
+        else:
+            state.selectGear = Data.SELECT_DRIVE
+            print(f"{state.rpm} {state.lock} {state.gear} {state.selectGear} {state.nextGear}")
+
+    def paddle_up(self, state):
+        if not (state.selectGear == Data.SELECT_DRIVE):
+            pass
+        else:
             print(f"up")
 
-    def paddle_down(self):
-        if not self.current.selectGear == "D":
+    def paddle_down(self, state):
+        if not (state.selectGear == Data.SELECT_DRIVE):
             pass
         else:
-            self.current.nextGear = "dn"
             print(f"dn")
 
-    def tc_lock(self):
-        self.current.lock = not self.current.lock
-        print(f"{self.current.lock}")
+    def tc_lock(self, state):
+        if not (state.selectGear == Data.SELECT_DRIVE):
+            pass
+        else:
+            print("lock")
 
     async def evaluate(self):
         while True:
             for _ in self.inputs:
                 _.set_input_flags()
-                if _.resolve_input_flags(): #and not self.current.shifting:
-                    _.action()
+                if _.resolve_input_flags(): #and not self.state.shifting:
+                    _.action(self.state)
 
             await uasyncio.sleep_ms(40)

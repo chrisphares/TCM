@@ -88,11 +88,17 @@ class Read():
     #iss = Speed_Sensor('X20')
 
     def __init__(self, state):
-        self.current = state
+        self.state = state
     
     async def update(self):
         while True:
             #for loop for getting sensor data
-            self.current.rpm = random.randint(0, 5400)
-            print(f"{self.adjTCC.value()}")
+            self.state.rpm = random.randint(0, 5400)
+            self.state.adjTCC = self.adjTCC.value()
+            self.state.adjPSS = self.adjPSS.value()
+            self.state.ps1 = self.ps1.value()
+            self.state.ps2 = self.ps2.value()
+            self.state.tft = self.tft.value()
+            print(f"{self.state.adjTCC}")
+
             await uasyncio.sleep_ms(40)

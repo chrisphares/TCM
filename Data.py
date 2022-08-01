@@ -9,6 +9,11 @@ class State:
         self.selectGear = None
         self.nextGear = None
         self.gear = None
+        self.adjPSS = 0
+        self.adjTCC = 0
+        self.ps1 = 0
+        self.ps2 = 0
+        self.tft = 0
 
 class Data:
     #/n88, n89, n90, n92, n282, n283/
@@ -22,6 +27,11 @@ class Data:
     FIFTH = (ON, ON, OFF, ON, OFF, ON)
     SIXTH = (ON, ON, ON, ON, OFF, OFF)
     DRIVE = FIRST #set this to second maybe?
+
+    SELECT_PARK = 0
+    SELECT_REVERSE = 1
+    SELECT_NUETRAL = 2
+    SELECT_DRIVE = 3
 
     RED = (25, 0, 0)
     L_RED = (9, 0, 0)
@@ -85,7 +95,7 @@ class Data:
         17: (BG, RED, L_RED, BG, BG, BG, BG, BG, BG, BG),
     }
 
-    #left to right == bottom to top    
+    #left to right & bottom to top    
     SPACE = (BG, BG, BG, BG, BG, BG, BG, BG)
     
     N10 = (BG, BG, BG, BG, BG, BG, BG, BLUE)
