@@ -8,15 +8,13 @@ async def main():
     current = Data.State()
 
     view = View.View(current)
-    sol = Solenoid.Valve_Body(current)
+    vb = Solenoid.Valve_Body(current)
     io = Pin_IO.Input(current)
     read = Sensors.Read(current)
-    o9g = Control.Control(current)
 
-    uasyncio.create_task(o9g.run())
     uasyncio.create_task(view.update())
-    uasyncio.create_task(sol.adjust())
-    uasyncio.create_task(io.evaluate())
+    uasyncio.create_task(vb.adjust())
+    uasyncio.create_task(io.get_input())
     uasyncio.create_task(read.update())
 
     while True:        

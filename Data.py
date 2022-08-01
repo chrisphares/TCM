@@ -7,7 +7,7 @@ class State:
         self.lock = False
         self.shifting = False##?
         self.selectGear = None
-        self.nextGear = None
+        self.paddleGear = None
         self.gear = None
         self.adjPSS = 0
         self.adjTCC = 0
@@ -26,12 +26,19 @@ class Data:
     FOURTH = (ON, ON, ON, OFF, OFF, ON)
     FIFTH = (ON, ON, OFF, ON, OFF, ON)
     SIXTH = (ON, ON, ON, ON, OFF, OFF)
-    DRIVE = FIRST #set this to second maybe?
 
     SELECT_PARK = 0
     SELECT_REVERSE = 1
     SELECT_NUETRAL = 2
     SELECT_DRIVE = 3
+
+    PADDLE_1 = 0
+    PADDLE_2 = 1
+    PADDLE_3 = 2
+    PADDLE_4 = 3
+    PADDLE_5 = 4
+    PADDLE_6 = 5
+    PADDLE_START = PADDLE_2
 
     RED = (25, 0, 0)
     L_RED = (9, 0, 0)

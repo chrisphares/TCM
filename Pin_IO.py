@@ -65,7 +65,7 @@ class Input:
             pass
         else:
             state.selectGear = Data.SELECT_PARK
-            print(f"{state.rpm} {state.lock} {state.gear} {state.selectGear} {state.nextGear}")
+            print(f"park")
 
     def reverse(self, state):
         if (state.gear == Data.REVERSE):
@@ -82,23 +82,33 @@ class Input:
             print(f"nuetral")
 
     def drive(self, state):
-        if (state.gear == Data.PARK): #is this the correct variable?
+        if (state.gear == Data.SELECT_DRIVE):
             pass
         else:
+            state.paddleGear = Data.PADDLE_START
             state.selectGear = Data.SELECT_DRIVE
-            print(f"{state.rpm} {state.lock} {state.gear} {state.selectGear} {state.nextGear}")
+            print(f"drive")
 
     def paddle_up(self, state):
         if not (state.selectGear == Data.SELECT_DRIVE):
             pass
         else:
-            print(f"up")
+            if (state.paddleGear < Data.PADDLE_6):
+                state.paddleGear += 1
+                print(f"up")
+            else:
+                print(f"in 6th - do nothing")
+                pass
 
     def paddle_down(self, state):
         if not (state.selectGear == Data.SELECT_DRIVE):
             pass
         else:
-            print(f"dn")
+            if (state.paddleGear > Data.PADDLE_1):
+                state.paddleGear -= 1
+                print(f"dn")
+            else:
+                print(f"in 1st - do nothing")
 
     def tc_lock(self, state):
         if not (state.selectGear == Data.SELECT_DRIVE):
@@ -106,7 +116,7 @@ class Input:
         else:
             print("lock")
 
-    async def evaluate(self):
+    async def get_input(self):
         while True:
             for _ in self.inputs:
                 _.set_input_flags()

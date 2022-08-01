@@ -48,7 +48,7 @@ class Valve_Body:
     vb = (n88, n89, n90, n92, n282, n283)
     
     def __init__(self, state):
-        self.current = state
+        self.state = state
 
     async def adjust(self):
         while True:
@@ -57,4 +57,7 @@ class Valve_Body:
                     pass
                 elif isinstance(_, PWM_Solenoid):
                     _.set_ps(_.lowPS)
+            if self.state.gear != self.state.selectGear:
+                print(f"select from {self.state.gear} to {self.state.selectGear}")
+                self.state.gear = self.state.selectGear
             await uasyncio.sleep_ms(40)
