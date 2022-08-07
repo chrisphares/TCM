@@ -63,45 +63,57 @@ class Input:
     def is_shifting(self):
         return self.state.shifting
 
-    def get_solenoid(self, sol):
-        return self.state.soleoid == sol
-
     def park(self):
         if (self.state.selectGear == Data.SELECT_PARK):
             pass
         else:
             self.state.shifting = True
             self.state.selectGear = Data.SELECT_PARK
+            self.state.paddleGear = None
+            self.state.nextGear = Data.SELECT_PARK
 
     def reverse(self):
-        if (self.state.gear == Data.REVERSE):
+        if (self.state.selectGear == Data.SELECT_REVERSE):
             pass
         else:
+            self.state.shifting = True
             self.state.selectGear = Data.SELECT_REVERSE
+            self.state.paddleGear = None
+            self.state.nextGear = Data.SELECT_REVERSE
 
     def nuetral(self):
-        if (self.state.gear == Data.NUETRAL):
+        if (self.state.selectGear == Data.SELECT_NUETRAL):
             pass
         else:
+            self.state.shifting = True
             self.state.selectGear = Data.SELECT_NUETRAL
+            self.state.paddleGear = None
+            self.state.nextGear = Data.SELECT_NUETRAL
 
     def drive(self):
-        if (self.state.solenoid == (Data.FIRST or Data.SECOND or Data.THIRD or Data.FOURTH or Data.FIFTH or Data.SIXTH)):
+        if (self.state.selectGear == Data.SELECT_DRIVE):
             pass
         else:
+            self.state.shifting = True
             self.state.selectGear = Data.SELECT_DRIVE
+            self.state.paddleGear = 0 # first?
+            self.state.nextGear = Data.SELECT_DRIVE #change to better initial selection with i/o & speed/rpm calc
 
     def paddle_up(self):
-        if not (self.state.gear == (Data.FIRST or Data.SECOND or Data.THIRD or Data.FOURTH or Data.FIFTH)):
+        if ((self.state.selectGear != Data.SELECT_DRIVE) or (self.state.paddleGear == Data.PADDLE_6) or (self.state.paddleGear == None)):
             pass
         else:
+            self.state.shifting = True
             self.state.paddleGear += 1
+            self.state.nextGear = Data.SELECT_DRIVE + self.state.paddleGear 
 
     def paddle_down(self):
-        if not (self.state.gear == (Data.SECOND or Data.THIRD or Data.FOURTH or Data.FIFTH or Data.SIXTH)):
+        if ((self.state.selectGear != Data.SELECT_DRIVE) or (self.state.paddleGear == Data.PADDLE_1) or (self.state.paddleGear == None)):
             pass
         else:
+            self.state.shifting = True
             self.state.paddleGear -= 1
+            self.state.nextGear = Data.SELECT_DRIVE + self.state.paddleGear 
 
     def tc_lock(self):
         if not (self.state.selectGear == Data.SELECT_DRIVE):

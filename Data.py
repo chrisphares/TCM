@@ -9,6 +9,7 @@ class State:
         self.selectGear = None
         self.paddleGear = None
         self.gear = None
+        self.nextGear = None
         self.solenoid = None
         self.adjPS = 0
         self.adjTCC = 0
@@ -43,7 +44,7 @@ class Data:
     RED = (25, 0, 0)
     L_RED = (9, 0, 0)
     YELLOW = (25, 25, 0)
-    ORANGE = (25, 16, 0)
+    ORANGE = (25, 17, 0)
     BLUE = (0, 0, 25)
     GREEN = (0, 25, 0)
     BG = (0, 0, 0)
