@@ -6,9 +6,10 @@ class State:
         self.rpm = 0
         self.lock = False
         self.shifting = False##?
-        self.selectGear = 2
+        self.selectGear = None
         self.paddleGear = None
         self.gear = None
+        self.solenoid = None
         self.adjPS = 0
         self.adjTCC = 0
         self.ps1 = 0
@@ -32,16 +33,12 @@ class Data:
     SELECT_NUETRAL = 2
     SELECT_DRIVE = 3
 
-    SELECT_SOL = (PARK, REVERSE, NUETRAL, SECOND) #start from second
-
     PADDLE_1 = 0
     PADDLE_2 = 1
     PADDLE_3 = 2
     PADDLE_4 = 3
     PADDLE_5 = 4
     PADDLE_6 = 5
-
-    PADDLE_SOL = (FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH)
 
     RED = (25, 0, 0)
     L_RED = (9, 0, 0)

@@ -2,15 +2,15 @@ import uasyncio
 from time import sleep_ms
 
 #---User Modules
-import View, Solenoid, Pin_IO, Sensors, Data
+import View, ValveBody, Pin_IO, Sensors, Data
 
 async def main():
-    current = Data.State()
+    state = Data.State()
 
-    view = View.View(current)
-    vb = Solenoid.Valve_Body(current)
-    io = Pin_IO.Input(current)
-    read = Sensors.Read(current)
+    view = View.View(state)
+    vb = ValveBody.Valve_Body(state)
+    io = Pin_IO.Input(state)
+    read = Sensors.Read(state)
 
     uasyncio.create_task(view.update())
     uasyncio.create_task(vb.adjust())
