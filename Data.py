@@ -6,10 +6,10 @@ class State:
         self.rpm = 0
         self.lock = False
         self.shifting = False##?
-        self.selectGear = None
+        self.selectGear = 2
         self.paddleGear = None
         self.gear = None
-        self.adjPSS = 0
+        self.adjPS = 0
         self.adjTCC = 0
         self.ps1 = 0
         self.ps2 = 0
@@ -32,17 +32,21 @@ class Data:
     SELECT_NUETRAL = 2
     SELECT_DRIVE = 3
 
+    SELECT_SOL = (PARK, REVERSE, NUETRAL, SECOND) #start from second
+
     PADDLE_1 = 0
     PADDLE_2 = 1
     PADDLE_3 = 2
     PADDLE_4 = 3
     PADDLE_5 = 4
     PADDLE_6 = 5
-    PADDLE_START = PADDLE_2
+
+    PADDLE_SOL = (FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH)
 
     RED = (25, 0, 0)
     L_RED = (9, 0, 0)
-    YELLOW = (25, 15, 5)
+    YELLOW = (25, 25, 0)
+    ORANGE = (25, 16, 0)
     BLUE = (0, 0, 25)
     GREEN = (0, 25, 0)
     BG = (0, 0, 0)
@@ -65,7 +69,7 @@ class Data:
     }
     
     #led strip order
-    COLOR = (BG, GREEN, GREEN, GREEN, GREEN, YELLOW, YELLOW, RED, RED, BLUE, BLUE)
+    COLOR = (BG, GREEN, GREEN, GREEN, GREEN, YELLOW, ORANGE, RED, RED, BLUE, BLUE)
     
     RPM = {
         0: (COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0]),

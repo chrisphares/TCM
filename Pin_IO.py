@@ -64,57 +64,49 @@ class Input:
         if (state.gear == Data.PARK):
             pass
         else:
+            self.state.shifting = True
             state.selectGear = Data.SELECT_PARK
-            print(f"park")
 
     def reverse(self, state):
         if (state.gear == Data.REVERSE):
             pass
         else:
+            self.state.shifting = True
             state.selectGear = Data.SELECT_REVERSE
-            print(f"reverse")
 
     def nuetral(self, state):
-        if (state.gear == Data.SELECT_NUETRAL):
+        if (state.gear == Data.NUETRAL):
             pass
         else:
+            self.state.shifting = True
             state.selectGear = Data.SELECT_NUETRAL
-            print(f"nuetral")
 
     def drive(self, state):
-        if (state.gear == Data.SELECT_DRIVE):
+        if (state.gear == (Data.FIRST or Data.SECOND or Data.THIRD or Data.FOURTH or Data.FIFTH or Data.SIXTH)):
             pass
         else:
-            state.paddleGear = Data.PADDLE_START
-            state.selectGear = Data.SELECT_DRIVE
-            print(f"drive")
+            self.state.shifting = True
+            self.state.gear = Data.SELECT_SOL[self.state.selectGear]
 
     def paddle_up(self, state):
-        if not (state.selectGear == Data.SELECT_DRIVE):
+        if not (state.gear == (Data.FIRST or Data.SECOND or Data.THIRD or Data.FOURTH or Data.FIFTH)):
             pass
         else:
-            if (state.paddleGear < Data.PADDLE_6):
-                state.paddleGear += 1
-                print(f"up")
-            else:
-                print(f"in 6th - do nothing")
-                pass
+            self.state.shifting = True
+            state.paddleGear += 1
 
     def paddle_down(self, state):
-        if not (state.selectGear == Data.SELECT_DRIVE):
+        if not (state.gear == (Data.SECOND or Data.THIRD or Data.FOURTH or Data.FIFTH or Data.SIXTH)):
             pass
         else:
-            if (state.paddleGear > Data.PADDLE_1):
-                state.paddleGear -= 1
-                print(f"dn")
-            else:
-                print(f"in 1st - do nothing")
+            self.state.shifting = True
+            state.paddleGear -= 1
 
     def tc_lock(self, state):
         if not (state.selectGear == Data.SELECT_DRIVE):
             pass
         else:
-            print("lock")
+            pass
 
     async def get_input(self):
         while True:

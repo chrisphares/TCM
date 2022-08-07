@@ -95,10 +95,9 @@ class Read():
             #for loop for getting sensor data
             self.state.rpm = random.randint(0, 5400)
             self.state.adjTCC = self.adjTCC.value()
-            self.state.adjPSS = self.adjPSS.value()
+            self.state.adjPS = self.adjPS.value()
             self.state.ps1 = self.ps1.value()
             self.state.ps2 = self.ps2.value()
             self.state.tft = self.tft.value()
-            print(f"{self.state.adjTCC}")
 
             await uasyncio.sleep_ms(40)

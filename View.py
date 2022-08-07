@@ -9,7 +9,7 @@ from Data import Data
 
 class View:
     def __init__(self, state):
-        self.current = state
+        self.state = state
         spi = SPI(1, SPI.CONTROLLER, baudrate=42_000_000)
         self.matrix = DotStar(spi, 64)
         self.led_1 = Pin('X10', Pin.OUT)
@@ -41,9 +41,9 @@ class View:
     
     async def update(self):
         while True:
-            rpm = self.convert_rpm(self.current.rpm)
+            rpm = self.convert_rpm(self.state.rpm)
             self.show_rpm(rpm)
 
-            #self.updateMatrix(g)
-            #print(f"rpm:{r} gear:{g} lock:{l}")
+            #self.updateMatrix(1)
+            print(f"shiting: {self.state.shifting} gear: {self.state.gear} | selectGear: {self.state.selectGear} | paddleGear: {self.state.paddleGear} | PS: {self.state.adjPS} | TC: {self.state.adjTCC}")
             await uasyncio.sleep_ms(40)

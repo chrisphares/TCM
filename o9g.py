@@ -2,7 +2,7 @@ import uasyncio
 from time import sleep_ms
 
 #---User Modules
-import View, Solenoid, Pin_IO, Sensors, Control, Data
+import View, Solenoid, Pin_IO, Sensors, Data
 
 async def main():
     current = Data.State()
