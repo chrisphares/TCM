@@ -44,7 +44,7 @@ class Data:
     RED = (25, 0, 0)
     L_RED = (9, 0, 0)
     YELLOW = (25, 25, 0)
-    ORANGE = (25, 17, 0)
+    ORANGE = (25, 13, 0)
     BLUE = (0, 0, 25)
     GREEN = (0, 25, 0)
     BG = (0, 0, 0)
@@ -67,7 +67,7 @@ class Data:
     }
     
     #led strip order
-    COLOR = (BG, GREEN, GREEN, GREEN, GREEN, YELLOW, ORANGE, RED, RED, BLUE, BLUE)
+    COLOR = (BG, GREEN, GREEN, GREEN, GREEN, GREEN, GREEN, YELLOW, ORANGE, RED, BLUE)
     
     RPM = {
         0: (COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0], COLOR[0]),
