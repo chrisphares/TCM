@@ -11,7 +11,7 @@ class Pin_IO:
         self.pin = Pin(pin, Pin.IN, Pin.PULL_DOWN)
         self.delay = delay
         self.action = action
-        self.state = OFF##
+        #self.state = OFF## think it's deprecated.
         self.lastState = OFF##
         self.inputFlags = OFF
         self.lastInputState = OFF

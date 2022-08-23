@@ -6,6 +6,7 @@ class State:
         self.rpm = 0
         self.lock = False
         self.shifting = False##?
+        self.shiftStage = 0
         self.selectGear = None
         self.paddleGear = None
         self.gear = None
@@ -22,7 +23,7 @@ class Data:
     PARK = (OFF, OFF, ON, OFF, OFF, ON)
     REVERSE = (OFF, OFF, OFF, ON, ON, ON)
     NUETRAL = (OFF, OFF, ON, ON, ON, ON)
-    FIRST = (ON, ON, OFF, ON, ON, ON)
+    FIRST = (ON, ON, ON, OFF, ON, ON)
     SECOND = (OFF, OFF, ON, OFF, ON, OFF)
     THIRD = (ON, ON, OFF, OFF, ON, ON)
     FOURTH = (ON, ON, ON, OFF, OFF, ON)
@@ -60,8 +61,8 @@ class Data:
     PIN = {
         'X1': (5, 1),
         'X2': (5, 2),
-        'X3': (9, 3),
-        'X4': (9, 4),
+        'X3': (5, 3),
+        'X4': (5, 4),
         'Y9': (2, 3),
         'Y10': (2, 4)
     }
