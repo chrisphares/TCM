@@ -1,6 +1,6 @@
 import uasyncio
 from pyb import SPI
-from time import sleep_ms
+from time import sleep_ms, ticks_ms
 from pyb import Pin
 
 #---User Modules
@@ -45,5 +45,5 @@ class View:
             self.show_rpm(rpm)
 
             #self.updateMatrix(1)
-            print(f"shiting:{self.state.shifting} | gear:{self.state.gear} | selectGear:{self.state.selectGear} | paddleGear:{self.state.paddleGear} | PS:{self.state.adjPS} | TC:{self.state.adjTCC}")
+            print(f"shifting:{self.state.shifting} | gear:{self.state.gear} | selectGear:{self.state.selectGear} | paddleGear:{self.state.paddleGear} | Lock:{self.state.lock} | tcPS:{self.state.adjTCC}")
             await uasyncio.sleep_ms(40)

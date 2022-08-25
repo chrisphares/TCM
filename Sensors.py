@@ -51,10 +51,10 @@ class Speed_Sensor:
         return self.rpm
 
 class Rotary_Sensor:
-    def __init__(self, pin):
+    def __init__(self, pin: Pin) -> None:
         self.adc = ADC(Pin(pin))
 
-    def value(self):
+    def value(self) -> int:
         r = self.adc.read()
         if not r:
             return 0
@@ -75,7 +75,7 @@ class Rotary_Sensor:
         elif r >= 3600:
             return 7
 
-class Read():
+class Read:
     adjPS = Rotary_Sensor('X11')
     adjTCC = Rotary_Sensor('X12')
 
@@ -87,10 +87,10 @@ class Read():
     #oss = Speed_Sensor('X19')
     #iss = Speed_Sensor('X20')
 
-    def __init__(self, state):
+    def __init__(self, state: State) -> None:
         self.state = state
     
-    async def update(self):
+    async def update(self) -> None:
         while True:
             #for loop for getting sensor data
             self.state.rpm = random.randint(0, 5400)

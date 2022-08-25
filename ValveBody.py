@@ -12,12 +12,9 @@ class OnOff_Solenoid:
         
     def toggle(self, state: bool) -> None:
         self.io.value(state)
-
-    def compare_state(self, value: int) -> bool:
-        return self.io.value() == value
         
 class PWM_Solenoid:
-    def __init__(self, pin: Pin, value: int, lowPS: int, highPS: int) -> None:
+    def __init__(self, pin: Pin, value: int=10, lowPS: int=10, highPS: int=60) -> None:
         self.tim = Timer(Data.PIN[pin][0], freq=300) #timer dict lookup
         self.io = self.tim.channel(Data.PIN[pin][1], Timer.PWM, pin=Pin(pin)) #channel dict lookup
         self.lowPS = lowPS
@@ -33,12 +30,6 @@ class PWM_Solenoid:
         if not enable:
             self.io.pulse_width_percent(self.highPS)
 
-    def compare_state(self, value: int) -> bool:
-        if value:
-            return self.io.pulse_width_percent() >= self.highPS
-        if not value:
-            return self.io.pulse_width_percent() <= self.lowPS
-
 class Valve_Body:
     OFF = const(0)
     ON = const(1)
@@ -46,18 +37,23 @@ class Valve_Body:
     n88 = OnOff_Solenoid('X22', OFF)
     n89 = OnOff_Solenoid('X21', OFF)
     
-    n90 = PWM_Solenoid('X4', 10, 10, 60)
-    n92 = PWM_Solenoid('X2', 10, 20, 60)
+    n90 = PWM_Solenoid('X4') #use defaults
+    n92 = PWM_Solenoid('X2', 10, 20)
     n282 = PWM_Solenoid('Y10', 10, 30, 60)
     n283 = PWM_Solenoid('Y9', 10, 10, 75)
 
-    n91 = PWM_Solenoid('X3', 50, 20, 60) #converter clutch
-    n93 = PWM_Solenoid('X1', 60, 20, 60) #main line presssure
+    n91 = PWM_Solenoid('X3', 10) #converter clutch / normally vented / initial value, then use TCCMAP in Data
+    #change to use math ^
+
+    n93 = PWM_Solenoid('X1', 60) #main line presssure
 
     def __init__(self, state: State) -> None:
         self.state = state
 
-    def gear_change(self) -> GEARCHANGE:
+    def get_tcc_pressure(self, lowVal: int, highVal: int) -> int:
+        return int(((highVal - lowVal) * (Data.TCCMAP[self.state.adjTCC] / 100)) + lowVal)
+
+    def get_gear_change(self) -> callable:
         return self.GEARCHANGE[str(self.state.gear) + "to" + str(self.state.nextGear)](self)
 
     def none_to_park(self) -> bool:
@@ -97,43 +93,26 @@ class Valve_Body:
         self.n283.toggle(Data.FIRST[5])
         return True
 
-    def first_to_second(self) -> bool: #lowPS == OFF; highPS == ON
-        # toggle solenoids N89 & N88 OFF
+    def first_to_second(self) -> bool:
         self.n88.toggle(OFF)
         self.n89.toggle(OFF)
 
-        if (self.state.shiftStage == 0): #0-50ms:        on to off: 0% -> 33%
-            start = self.n283.lowPS
-            stop = ((self.n283.highPS - self.n283.lowPS) // 3) + self.n283.lowPS
-            for step in range(start , stop):
-                self.n283.set_ps(step)
-                sleep_ms(8) #gear/stage dependent variable
-            self.state.shiftStage = 1
+        stepN283 = ((self.n283.highPS - self.n283.lowPS) // 15) * -1
+        valN283 = list(range(self.n283.highPS, self.n283.lowPS,  stepN283))
+
+        if (self.state.shiftStage <= 15):
+            self.n283.set_ps(valN283[self.state.shiftStage])
+            self.state.shiftStage += 1
             return False
-
-        if (self.state.shiftStage == 1): #50ms-100ms:    on to off: 33% to 66%
-            start = ((self.n283.highPS - self.n283.lowPS) // 3) + self.n283.lowPS
-            stop = (((self.n283.highPS - self.n283.lowPS) // 3) * 2) + self.n283.lowPS
-            for step in range(start, stop):
-                self.n283.set_ps(step)
-                sleep_ms(8)
-            self.state.shiftStage = 2
-            return False 
-
-        if (self.state.shiftStage == 2): #50ms-100ms:    on to off: 33% to 66%
-            start = (((self.n283.highPS - self.n283.lowPS) // 3) * 2) + self.n283.lowPS
-            stop = self.n283.highPS
-            for step in range(start, stop):
-                self.n283.set_ps(step)
-                sleep_ms(8)
-            self.state.shiftStage = 0
+        else:
+            self.n283.set_ps(self.n283.lowPS)
             return True
 
     def second_to_third(self) -> bool:
         stepN283 = ((self.n283.highPS - self.n283.lowPS) // 15) * -1
         stepN90 = ((self.n90.highPS - self.n90.lowPS) // 15)
         
-        valN283 = list(range(self.n283.highPS, self.n283.lowPS,  stepN283)) #hard code?
+        valN283 = list(range(self.n283.highPS, self.n283.lowPS,  stepN283))
         valN90 = list(range(self.n90.lowPS, self.n90.highPS, stepN90))
 
         for i in range(10):
@@ -160,7 +139,7 @@ class Valve_Body:
         stepN90 = ((self.n90.highPS - self.n90.lowPS) // 15) * -1
         stepN282 = ((self.n282.highPS - self.n282.lowPS) // 15)
         
-        valN90 = list(range(self.n90.highPS, self.n90.lowPS,  stepN90)) #hard code?
+        valN90 = list(range(self.n90.highPS, self.n90.lowPS,  stepN90))
         valN282 = list(range(self.n282.lowPS, self.n282.highPS, stepN282))
 
         for i in range(10):
@@ -187,7 +166,7 @@ class Valve_Body:
         stepN282 = ((self.n282.highPS - self.n282.lowPS) // 15) * -1
         stepN90 = ((self.n90.highPS - self.n90.lowPS) // 15)
         
-        valN282 = list(range(self.n282.highPS, self.n282.lowPS,  stepN282)) #hard code?
+        valN282 = list(range(self.n282.highPS, self.n282.lowPS,  stepN282))
         valN90 = list(range(self.n90.lowPS, self.n90.highPS, stepN90))
 
         for i in range(10):
@@ -257,18 +236,24 @@ class Valve_Body:
         "8to7": "sixth to fifth",
         "7to6": "5 -> 4",
         "6to5": fourth_to_third,
-        "5to4": "sixth to fifth",
-        "4to3": "sixth to fifth"
+        "5to4": "3 -> 2",
+        "4to3": "2 -> 1"
     }
 
-    def shift(self):
-        if (self.gear_change()):
+    def shift(self) -> None:
+        if (self.get_gear_change()):
             self.state.gear = self.state.nextGear
             self.state.nextGear = None
             self.state.shifting = False
             self.state.shiftStage = 0
-        
-    async def adjust(self):
+
+    def engage_TCC(self) -> None:
+        self.n91.set_ps(self.get_tcc_pressure(self.n91.lowPS, self.n91.highPS))
+
+    def disengage_TCC(self) -> None:
+        self.n91.set_ps(self.n91.lowPS)
+
+    async def adjust(self) -> None:
         while True:
             #for _ in self.vb:
                 #if isinstance(_, OnOff_Solenoid):#wrong place for this
@@ -276,7 +261,13 @@ class Valve_Body:
                 #elif isinstance(_, PWM_Solenoid):
                     #_.set_ps(_.lowPS)
 
-            if self.state.shifting == True:
+            if (self.state.shifting):
                 self.shift()
-                
+            
+            if (self.state.lock and not self.state.shifting):
+                self.engage_TCC()
+
+            if (not self.state.lock):
+                self.disengage_TCC()
+            
             await uasyncio.sleep_ms(40)

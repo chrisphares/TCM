@@ -5,6 +5,8 @@ class State:
     def __init__(self):
         self.rpm = 0
         self.lock = False
+        self.lockDelay = 500
+        self.lockDelayTime = None
         self.shifting = False##?
         self.shiftStage = 0
         self.selectGear = None
@@ -23,7 +25,7 @@ class Data:
     PARK = (OFF, OFF, ON, OFF, OFF, ON)
     REVERSE = (OFF, OFF, OFF, ON, ON, ON)
     NUETRAL = (OFF, OFF, ON, ON, ON, ON)
-    FIRST = (ON, ON, ON, OFF, ON, ON)
+    FIRST = (OFF, OFF, OFF, ON, OFF, OFF)
     SECOND = (OFF, OFF, ON, OFF, ON, OFF)
     THIRD = (ON, ON, OFF, OFF, ON, ON)
     FOURTH = (ON, ON, ON, OFF, OFF, ON)
@@ -34,6 +36,14 @@ class Data:
     SELECT_REVERSE = 1
     SELECT_NUETRAL = 2
     SELECT_DRIVE = 3
+
+    SELECTGEAR = {
+        0: None,
+        1: SELECT_DRIVE,
+        2: SELECT_NUETRAL,
+        4: SELECT_REVERSE,
+        8: SELECT_PARK
+    }
 
     PADDLE_1 = 0
     PADDLE_2 = 1
@@ -65,6 +75,18 @@ class Data:
         'X4': (5, 4),
         'Y9': (2, 3),
         'Y10': (2, 4)
+    }
+
+    #converter dial mapping
+    TCCMAP = {
+        0: 37,
+        1: 46,
+        2: 55,
+        3: 64,
+        4: 73,
+        5: 82,
+        6: 91,
+        7: 100
     }
     
     #led strip order
