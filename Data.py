@@ -1,27 +1,8 @@
-OFF = const(0)
-ON = const(1)
-
-class State:
-    def __init__(self):
-        self.rpm = 0
-        self.lock = False
-        self.lockDelay = 500
-        self.lockDelayTime = None
-        self.shifting = False##?
-        self.shiftStage = 0
-        self.selectGear = None
-        self.paddleGear = None
-        self.gear = None
-        self.nextGear = None
-        self.solenoid = None
-        self.adjPS = 0
-        self.adjTCC = 0
-        self.ps1 = 0
-        self.ps2 = 0
-        self.tft = 0
-
 class Data:
-    #/n88, n89, n90, n92, n282, n283/
+    # --deprecated-- Del after ValveBody.py modification
+    OFF = const(0)
+    ON = const(1)
+    #/n88, n89, n90, n92, n282, n283/ 
     PARK = (OFF, OFF, ON, OFF, OFF, ON)
     REVERSE = (OFF, OFF, OFF, ON, ON, ON)
     NUETRAL = (OFF, OFF, ON, ON, ON, ON)
@@ -31,6 +12,23 @@ class Data:
     FOURTH = (ON, ON, ON, OFF, OFF, ON)
     FIFTH = (ON, ON, OFF, ON, OFF, ON)
     SIXTH = (ON, ON, ON, ON, OFF, OFF)
+
+#Pin_IO
+    PIN = {
+        'X1': (5, 1),
+        'X2': (5, 2),
+        'X3': (5, 3),
+        'X4': (5, 4),
+        'Y9': (2, 3),
+        'Y10': (2, 4)
+    }
+
+    PADDLE_1 = 0
+    PADDLE_2 = 1
+    PADDLE_3 = 2
+    PADDLE_4 = 3
+    PADDLE_5 = 4
+    PADDLE_6 = 5
 
     SELECT_PARK = 0
     SELECT_REVERSE = 1
@@ -45,17 +43,36 @@ class Data:
         8: SELECT_PARK
     }
 
-    PADDLE_1 = 0
-    PADDLE_2 = 1
-    PADDLE_3 = 2
-    PADDLE_4 = 3
-    PADDLE_5 = 4
-    PADDLE_6 = 5
+#Sensors
 
+    tccMap = (
+        250,
+        800,
+        1400,
+        2000,
+        2600,
+        3200,
+        3600,
+        4095
+    )
+
+    psMap = (
+        250,
+        800,
+        1400,
+        2000,
+        2600,
+        3200,
+        3600,
+        4095
+    )
+
+#View
+    #referenced below
     RED = (25, 0, 0)
     L_RED = (9, 0, 0)
-    YELLOW = (25, 25, 0)
     ORANGE = (25, 13, 0)
+    YELLOW = (25, 25, 0)
     BLUE = (0, 0, 25)
     GREEN = (0, 25, 0)
     BG = (0, 0, 0)
@@ -63,33 +80,13 @@ class Data:
     """
         RED = (2, 0, 0)
         L_RED = (1, 0, 0)
+        ORANGE = (2, 1, 0)
         YELLOW = (4, 4, 0)
         BLUE = (0, 0, 2)
         GREEN = (0, 2, 0)
         BG = (0, 0, 0)
     """
-    PIN = {
-        'X1': (5, 1),
-        'X2': (5, 2),
-        'X3': (5, 3),
-        'X4': (5, 4),
-        'Y9': (2, 3),
-        'Y10': (2, 4)
-    }
 
-    #converter dial mapping
-    TCCMAP = {
-        0: 37,
-        1: 46,
-        2: 55,
-        3: 64,
-        4: 73,
-        5: 82,
-        6: 91,
-        7: 100
-    }
-    
-    #led strip order
     COLOR = (BG, GREEN, GREEN, GREEN, GREEN, GREEN, GREEN, YELLOW, ORANGE, RED, BLUE)
     
     RPM = {

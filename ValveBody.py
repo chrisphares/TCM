@@ -14,17 +14,21 @@ class OnOff_Solenoid:
         self.io.value(state)
         
 class PWM_Solenoid:
-    def __init__(self, pin: Pin, value: int=10, lowPS: int=10, highPS: int=60) -> None:
+    def __init__(self, pin: Pin, value: int=10, lowPS: int=10, highPS: int=60, psMap: dict=None) -> None: #remove high/loe => map for everyone!
         self.tim = Timer(Data.PIN[pin][0], freq=300) #timer dict lookup
         self.io = self.tim.channel(Data.PIN[pin][1], Timer.PWM, pin=Pin(pin)) #channel dict lookup
         self.lowPS = lowPS
         self.highPS = highPS
+        self.psMap = psMap
         self.io.pulse_width_percent(value)
 
-    def set_ps(self, value: int) -> None:
-        self.io.pulse_width_percent(value)
+    def set_ps(self, val: int) -> None: #return true => error checking?
+        self.io.pulse_width_percent(val)
 
-    def toggle(self, enable: bool) -> None:
+    def get_ps_from_map(self, val: int) -> int:
+        return int(((self.highPS - self.lowPS) * (self.psMap[val] / 100)) + self.lowPS) #validate universally
+
+    def toggle(self, enable: bool) -> None: #toggle or set low?? duck typing?
         if enable:
             self.io.pulse_width_percent(self.lowPS)
         if not enable:
@@ -42,16 +46,24 @@ class Valve_Body:
     n282 = PWM_Solenoid('Y10', 10, 30, 60)
     n283 = PWM_Solenoid('Y9', 10, 10, 75)
 
-    n91 = PWM_Solenoid('X3', 10) #converter clutch / normally vented / initial value, then use TCCMAP in Data
-    #change to use math ^
+    #converter clutch / normally vented / Pin, initial value, MAP
+    n91 = PWM_Solenoid(
+        'X3', 10, 10, 60, {
+            0: 37,
+            1: 46,
+            2: 55,
+            3: 64,
+            4: 73,
+            5: 82,
+            6: 91,
+            7: 100
+        }
+    )
 
     n93 = PWM_Solenoid('X1', 60) #main line presssure
 
     def __init__(self, state: State) -> None:
         self.state = state
-
-    def get_tcc_pressure(self, lowVal: int, highVal: int) -> int:
-        return int(((highVal - lowVal) * (Data.TCCMAP[self.state.adjTCC] / 100)) + lowVal)
 
     def get_gear_change(self) -> callable:
         return self.GEARCHANGE[str(self.state.gear) + "to" + str(self.state.nextGear)](self)
@@ -248,19 +260,13 @@ class Valve_Body:
             self.state.shiftStage = 0
 
     def engage_TCC(self) -> None:
-        self.n91.set_ps(self.get_tcc_pressure(self.n91.lowPS, self.n91.highPS))
+        self.n91.set_ps(self.n91.get_ps_from_map(self.state.adjTCC))
 
     def disengage_TCC(self) -> None:
         self.n91.set_ps(self.n91.lowPS)
 
     async def adjust(self) -> None:
         while True:
-            #for _ in self.vb:
-                #if isinstance(_, OnOff_Solenoid):#wrong place for this
-                    #pass
-                #elif isinstance(_, PWM_Solenoid):
-                    #_.set_ps(_.lowPS)
-
             if (self.state.shifting):
                 self.shift()
             

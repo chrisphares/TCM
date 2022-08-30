@@ -4,7 +4,7 @@ from pyb import Pin
 class NeoPixel:
     ORDER = (1, 0, 2, 3)
 
-    def __init__(self, pin, n, bpp=3, timing=1):
+    def __init__(self, pin, n, bpp=3, timing=1) -> None:
         self.pin = pin
         self.n = n
         self.bpp = bpp

@@ -1,6 +1,7 @@
 import uasyncio
 from pyb import ADC, Pin
 from time import ticks_ms, ticks_us, ticks_diff, ticks_add
+from Data import Data
 #testing
 import random
 
@@ -54,30 +55,17 @@ class Rotary_Sensor:
     def __init__(self, pin: Pin) -> None:
         self.adc = ADC(Pin(pin))
 
-    def value(self) -> int:
+    def value(self, sensMap: list) -> int:
         r = self.adc.read()
         if not r:
             return 0
-        elif r < 250:
-            return 0
-        elif r < 800:
-            return 1
-        elif r < 1400:
-            return 2
-        elif r < 2000:
-            return 3
-        elif r < 2600:
-            return 4
-        elif r < 3200:
-            return 5
-        elif r < 3600:
-            return 6
-        elif r >= 3600:
-            return 7
+        for i, val in enumerate(sensMap):
+            if r <= val:
+                return i
 
 class Read:
-    adjPS = Rotary_Sensor('X11')
-    adjTCC = Rotary_Sensor('X12')
+    adjPS = Rotary_Sensor('X19')
+    adjTCC = Rotary_Sensor('X20')
 
     ps1 = Pressure_Sensor('X17')
     ps2 = Pressure_Sensor('X18')
@@ -94,8 +82,8 @@ class Read:
         while True:
             #for loop for getting sensor data
             self.state.rpm = random.randint(0, 5400)
-            self.state.adjTCC = self.adjTCC.value()
-            self.state.adjPS = self.adjPS.value()
+            self.state.adjTCC = self.adjTCC.value(Data.tccMap)
+            self.state.adjPS = self.adjPS.value(Data.psMap)
             self.state.ps1 = self.ps1.value()
             self.state.ps2 = self.ps2.value()
             self.state.tft = self.tft.value()
